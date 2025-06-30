@@ -1,19 +1,16 @@
-import React from 'react'
-import { useDispatch, useSelector } from "react-redux";
-import { addFavorite } from "../../Store/Slices/favorite";
+import Search from "../Movie/Search";
 
 function Home() {
-  const dispatch = useDispatch();
-  const favoriteMovies = useSelector((state) => state.favoriteList.list);
-
-  const addToFavorite = () => {
-   dispatch(addFavorite());
-  };
   return (
-    <div>
-      <button onClick={addToFavorite}>dsdasdasdasd</button>
+    <div className="flex flex-col justify-center items-center mt-20 gap-15">
+      <div className="text-center ">
+        <h3 className="text-2xl text-slate-400">Home </h3>
+      </div>
+      <div className="w-full">
+        <Search />
+      </div>
     </div>
   );
 }
 
-export default Home
+export default Home;

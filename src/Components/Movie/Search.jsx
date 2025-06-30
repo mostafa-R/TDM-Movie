@@ -1,8 +1,8 @@
 import searchIcon from "./search.svg";
 
-function Search({ search, searchTerm, setSearchTerm }) {
+function Search({ searchTerm, setSearchTerm }) {
   return (
-    <form className="max-w-sm mx-auto " action={search}>
+    <form className="max-w-sm mx-auto mb-5 ">
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"

@@ -1,23 +1,9 @@
-// import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import StarIcon from "../Star/Star";
-// import { addFavorite } from "../../Store/Slices/favorite";
 
-function MovieCard({ movie }) {
- 
-  // const dispatch = useDispatch();
-  // const favoriteMovies = useSelector((state) => state.favoriteList.list);
-
-  // const addToFavorite = () => {
-  //   const exists = favoriteMovies.find((m) => m.id === movie.id);
-  //   if (!exists) {
-  //     dispatch(addFavorite(movie));
-  //   }
-  // };
+function MovieCard({ movie, handleToggle, favoriteMovies }) {
   return (
-    <div
-      className="mt-5 w-full max-w-72 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 "
-          >
+    <div className="w-full max-w-72 bg-white border border-gray-200 rounded-lg  dark:bg-gray-800 dark:border-gray-700 shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-110 cursor-pointer overflow-hidden">
       <Link to={`/details/${movie.id}`}>
         <img
           className="p-1 rounded-t-lg h-80 w-full"
@@ -39,10 +25,19 @@ function MovieCard({ movie }) {
           <p className="leading-relaxed text-base  text-gray-500 ">
             {movie.release_date}
           </p>
-          <StarIcon
-            className="text-slate-500 hover:text-yellow-600 cursor-pointer"
-            // onClick={addToFavorite}
-          />
+          <button
+            onClick={() => {
+              handleToggle(movie);
+            }}
+          >
+            <StarIcon
+              className={`text-slate-500 hover:text-yellow-600 cursor-pointer ${
+                favoriteMovies.some((fav) => fav.id === movie.id)
+                  ? "text-yellow-600"
+                  : "text-slate-500"
+              }`}
+            />
+          </button>
         </div>
       </div>
     </div>

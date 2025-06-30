@@ -1,50 +1,41 @@
 import { useEffect, useState } from "react";
-
-import { useRouteError } from "react-router-dom";
-import instance from "../../Instance/instance.js";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../../Store/Slices/favorite";
+import { searchThunk, thunkdata } from "../../Store/Slices/fetchMovie.js";
 import Loadin from "./Loadin";
 import MovieCard from "./MovieCard.jsx";
 import Pagination from "./Pagination";
 import Search from "./Search";
 
 function Movie() {
-  const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchMovies = async () => {
-    try {
-      const response = await instance.get("/movie/popular", {
-        params: {
-          language: "en-US",
-          page,
-        },
-      });
+  const dispatch = useDispatch();
+  const favoriteMovies = useSelector((state) => state.favorites.list);
 
-      const data = response.data;
-
-      setMovies(data.results);
-    } catch (error) {
-      console.error(error);
+  const handleToggle = (movie) => {
+    const exists = favoriteMovies.some((fav) => fav.id === movie.id);
+    if (exists) {
+      dispatch(removeFavorite(movie));
+    } else {
+      dispatch(addFavorite(movie));
     }
   };
 
-  const search = () => {
-    instance
-      .get(`/search/movie?query=${searchTerm}`)
-      .then((res) => {
-        setMovies(res.data.results);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const movies = useSelector((state) => state.movies.movies);
+
+  const dispatchMovies = useDispatch();
+
+  const handleSearch = (searchTerm) => {
+    dispatchMovies(searchThunk(searchTerm));
   };
 
   useEffect(() => {
     if (searchTerm.trim()) {
-      search(searchTerm);
+      handleSearch(searchTerm);
     } else {
-      fetchMovies();
+      dispatchMovies(thunkdata(page));
     }
   }, [searchTerm, page]);
 
@@ -59,14 +50,10 @@ function Movie() {
   return (
     <>
       <div className="w-full block mt-5">
-        <Search
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          search={search}
-        />
+        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
 
-      <div className="dark:bg-gray-900 w-full h-full">
+      <div className=" w-full h-full">
         {movies.length === 0 && (
           <>
             <Loadin />
@@ -77,28 +64,17 @@ function Movie() {
 
         <div className=" flex flex-wrap  justify-center items-center gap-4">
           {movies.map((movie) => (
-            <>
-              <MovieCard key={movie.id} movie={movie} />
-            </>
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              handleToggle={() => handleToggle(movie)}
+              favoriteMovies={favoriteMovies}
+            />
           ))}
         </div>
       </div>
       <Pagination nextPage={nextPage} prevPage={prevPage} page={page} />
     </>
-  );
-}
-
-// export const loader = async () => {
-//   const res = await instance.get("/movie/popular");
-//   return res.data;
-// };
-
-export function ErrorFun() {
-  const error = useRouteError();
-  return (
-    <div>
-      <h1>{error.message}</h1>
-    </div>
   );
 }
 
